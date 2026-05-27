@@ -1,20 +1,46 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import 'react-native-gesture-handler';
 
-export default function App() {
+import NewsScreen from './screens/NewsScreen';
+import DetailsScreen from './screens/DetailsScreen';
+import ContactsScreen from './screens/ContactsScreen';
+import CustomDrawerContent from './components/CustomDrawerContent';
+
+const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
+
+// Створюємо Stack Navigator для новин
+function NewsStack() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Stack.Navigator>
+      {/* Приховуємо хедер стеку, щоб не було подвійного хедера з Drawer */}
+      <Stack.Screen 
+        name="NewsList" 
+        component={NewsScreen} 
+        options={{ headerShown: false }} 
+      />
+      {/* Заголовок буде динамічно змінюватися в самому DetailsScreen */}
+      <Stack.Screen 
+        name="Details" 
+        component={DetailsScreen} 
+      />
+    </Stack.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  return (
+    <NavigationContainer>
+      {/* Підключаємо наш кастомний компонент бокового меню */}
+      <Drawer.Navigator 
+        drawerContent={(props) => <CustomDrawerContent {...props} />}
+      >
+        <Drawer.Screen name="Новини" component={NewsStack} />
+        <Drawer.Screen name="Контакти" component={ContactsScreen} />
+      </Drawer.Navigator>
+    </NavigationContainer>
+  );
+}
